@@ -2,7 +2,7 @@
 	include "conexion.php";
 	$id_usuario= $_GET["id_usuario"];
         $x = $_GET["x"];
-        $y = $_GET["y"];
+        $y = $_GET["y"]; // comentario
 
 	$sql = "SELECT (a.x BETWEEN $x-10 AND $x+10) OR (a.y BETWEEN $y-10 AND $y+10) AS rango_dia FROM alarma a INNER JOIN usuario u ON a.fk_usuario = u.id_usuario WHERE u.id_usuario = $id_usuario AND DATE(NOW()) = DATE(a.fecha_hora);";
 	$query = mysqli_query($conexion, $sql);
