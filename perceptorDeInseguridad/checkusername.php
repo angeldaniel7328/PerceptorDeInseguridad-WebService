@@ -1,54 +1,54 @@
 <?php
     //checkusername.php
-    include "conexion.php";
+    include "connection.php";
 
-    //validar parametros POST
-    if(isset($_POST['nombre']) && isset($_POST['correo'])){
+    //check post parameters
+    if(isset($_POST['name']) && isset($_POST['email'])){
 
-        $nombre=$_POST['nombre'];
-        $correo=$_POST['correo'];
-        $consulta = "select * from usuario where nombre = '$nombre'";
-        $qwery = mysqli_query($conexion, $consulta);
+        $name=$_POST['name'];
+        $email=$_POST['email'];
+        $consult = "SELECT * FROM user WHERE name = '$name'";
+        $qwery = mysqli_query($connection, $consult);
 
         if($qwery){
-        //la consulta se realizo con exito
+        //query carried out successfully
 
             if($row = mysqli_num_rows($qwery)> 0){
-                //Ya hay 1 o mas registros con el mismo nombre             
-                echo "Usuario ya existe";
+                //there are 1 or more users with the same name            
+                echo "user already exists";
             }
             else{
-                $consulta = "select * from usuario where correo='$correo'";
-                $qwery = mysqli_query($conexion, $consulta);
+                $consult = "SELECT * FROM usuario WHERE email='$email'";
+                $qwery = mysqli_query($connection, $consult);
                 if($qwery){
-                //la consulta se realizo con exito
+                //query carried out successfully
 
                     if($row = mysqli_num_rows($qwery)> 0){
-                        //Ya hay 1 o mas registros con el mismo nombre             
-                        echo "Correo ya ocupado";
+                        //there are 1 or more users with the same email             
+                        echo "email already occupied";
                     }
                     else {
-                        echo "libre";
+                        echo "free";
                     }
                 }
                 else{
-                    //La consulta no se realizo con exito
-                    echo "error del servidor";
+                    //server error
+                    echo "server error";
                 }
             }
         }
         else{
-            //La consulta no se realizo con exito
-            echo "error del servidor";
+            //the query was not successful
+            echo "error server";
         }
-        mysql_close($conexion);
+        mysql_close($connection);
         
     }
     else{
-        //No se establecieron los parametros POST
-        echo "POST no enviado";
+        //POST parameters not set
+        echo "POST not set";
     }
 
-    //Para hacer pruebas, utilice este url.
-    //  www.edacarquitectos.com/perceptorDeInseguridad/checkusername.php?nombre=mordekai&correo=pepe@bixor.com
+    //for tests use this link.
+    //  www.edacarquitectos.com/perceptorDeInseguridad/checkusername.php?name=mordekai&email=pepe@bixor.com
 ?>
