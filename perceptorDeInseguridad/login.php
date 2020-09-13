@@ -1,40 +1,41 @@
 <?php
     // login.php
 
-    include "conexion.php";
+    include "connection.php";
 
-    $datosVacios["id_usuario"]='';
-    $datosVacios["nombre"]='';
-    $datosVacios["fecha_nacimiento"]='';
-    $datosVacios["edad"]='';
-    $datosVacios["genero"]='';
-    $datosVacios["nacionalidad"]='';
-    $datosVacios["nivel_socioeconomico"]='';
-    $datosVacios["ocupacion"]='';
-    $jsonVacio['datos'][]=$datosVacios;
+    $emptyData["pk_user"]='';
+    $emptyData["name"]='';
+    $emptyData["date_birth"]='';
+    $emptyData["age"]='';
+    $emptyData["gender"]='';
+    $emptyData["nationality"]='';
+    $emptyData["socioeconomic_level"]='';
+    $emptyData["occupation"]='';
+    $emptyData["sexual_orientation"]='';
+    $emptyData["skin_color"]='';
+    
+    $emptyJson['date'][]=$emptyData;
 
-    if(isset($_POST["nombre"]) && isset($_POST["contrasena"])){
-        $user=$_POST["nombre"];
-        $pwd=$_POST["contrasena"];
-        $sql="SELECT * FROM usuario WHERE nombre = '$user' AND contrasena = '$pwd'";
-        $qwery = mysqli_query($conexion, $sql);
+    if(isset($_POST["name"]) && isset($_POST["password"])){
+        $name=$_POST["name"];
+        $password=$_POST["password"];
+        $sql="SELECT * FROM users WHERE name = '$name' AND password = '$password'";
+        $qwery = mysqli_query($connection, $sql);
         if($qwery){
-
             if($row = mysqli_num_rows($qwery)== 1){
-
-                $fila = mysqli_fetch_array($qwery);
-                $json['datos'][] = $fila;
+                $record = mysqli_fetch_array($qwery);
+                $json['date'][] = $record;
                 echo json_encode($json);
             }
             else{
-                echo json_encode($jsonVacio);
+                echo json_encode($emptyJson);
             }
         }
         else{
-            echo json_encode($jsonVacio);
+            echo json_encode($emptyJson);
         }
     }
     else{
-        echo json_encode($jsonVacio);
+        echo json_encode($emptyJson);
     }
 ?>

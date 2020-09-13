@@ -1,94 +1,113 @@
 <?php
     // singup.php
 
-    include "conexion.php";
+    include "connection.php";
 
-    $datosVacios["id_usuario"]='';
-    $datosVacios["nombre"]='';
-    $datosVacios["fecha_nacimiento"]='';
-    $datosVacios["edad"]='';
-    $datosVacios["genero"]='';
-    $datosVacios["nacionalidad"]='';
-    $datosVacios["nivel_socioeconomico"]='';
-    $datosVacios["ocupacion"]='';
-    $jsonVacio['datos'][]=$datosVacios;
+    $emptyData["pk_user"]='';
+    $emptyData["name"]='';
+    $emptyData["date_birth"]='';
+    $emptyData["age"]='';
+    $emptyData["gender"]='';
+    $emptyData["nationality"]='';
+    $emptyData["socioeconomic_level"]='';
+    $emptyData["occupation"]='';
+    $emptyData["sexual_orientation"]='';
+    $emptyData["skin_color"]='';
 
-    if(isset($_POST['nombre']) && isset($_POST['contrasena']) && isset($_POST['fecha_nacimiento']) && isset($_POST['genero']) && isset($_POST['correo'])
-    ){
-        $nombre=$_POST['nombre'];
-        $contrasena=$_POST['contrasena'];
-        $fecha_nacimiento = $_POST['fecha_nacimiento'];
-        $genero = $_POST['genero'];
-        $correo = $_POST['correo'];
+    $emptyJson['date'][]=$emptyData;
 
-        $consulta = "select * from usuario where nombre = '$nombre'";
-        $qwery = mysqli_query($conexion, $consulta);
+    if(
+    	isset($_POST['name']) && 
+    	isset($_POST['password']) && 
+    	isset($_POST['date_birth']) && 
+    	isset($_POST['gender']) && 
+    	isset($_POST['email'])){
+
+        $name = $_POST['name'];
+        $password = $_POST['password'];
+        $date_birth = $_POST['date_birth'];
+        $gender = $_POST['gender'];
+        $email = $_POST['email'];
+
+        $sql = "SELECT * FROM users WHERE name = '$name'";
+        $qwery = mysqli_query($connetion, $sql);
 
         if($qwery){
         //la consulta se realizo con exito
 
             if($row = mysqli_num_rows($qwery)> 0){
                 //Ya hay 1 o mas registros con el mismo nombre             
-                echo json_encode($jsonVacio);
+                echo json_encode($emptyJson);
             }
             else {
                 //no hay registros con el mismo nombre
 
                 //funcion para calcular la edad
-                function busca_edad($fecha_nacimiento){
-                    $dia=date("d");
-                    $mes=date("m");
-                    $ano=date("Y");
-                    $dianaz=date("d",strtotime($fecha_nacimiento));
-                    $mesnaz=date("m",strtotime($fecha_nacimiento));
-                    $anonaz=date("Y",strtotime($fecha_nacimiento));
+                function calculate_age($date_birth){
+                    $day = date("d");
+                    $month = date("m");
+                    $year = date("Y");
+                    $day_birth = date("d",strtotime($date_birth));
+                    $month_birth = date("m",strtotime($date_birth));
+                    $year_birth = date("Y",strtotime($date_birth));
 
-                    if (($mesnaz == $mes) && ($dianaz > $dia)) {
-                    $ano=($ano-1); }
+                    if (($month_birth == $month) && ($day_birth > $day)) {
+                    	$year=($year-1); 
+                	}
 
-                    if ($mesnaz > $mes) {
-                    $ano=($ano-1);}
-                    $edad=($ano-$anonaz);
+                    if ($month_birth > $month) {
+                    	$year=($year-1);
+                    }
+                    $age=($year-$year_birth);
 
-                    return $edad;
+                    return $age;
                 }
-                $edad = busca_edad($fecha_nacimiento);
-                $insercion = "";
+                $age = calculate_age($date_birth);
+                $sql = "";
 
-                if (isset($_POST['nacionalidad']) && isset($_POST['nivel_socioeconomico']) && isset($_POST['ocupacion'])) {
-                    $nacionalidad = $_POST['nacionalidad'];
-                    $nivel_socioeconomico = $_POST['nivel_socioeconomico'];
-                    $ocupacion = $_POST['ocupacion'];
-                    $insercion = "insert into usuario (nombre, contrasena, fecha_nacimiento, edad, genero, correo,nacionalidad, nivel_socioeconomico, ocupacion) values ('".$nombre."', '".$contrasena."', '".$fecha_nacimiento."', $edad, '".$genero."', '".$correo."', '".$nacionalidad."', '".$nivel_socioeconomico."', '".$ocupacion."');";
+                if (
+                	isset($_POST['nationality']) && 
+                	isset($_POST['socioeconomic_level']) && 
+                	isset($_POST['occupation']) && 
+                	isset($_POST['sexual_orientation']) && 
+                	isset($_POST['skin_color'])) {
+
+                    $nationality = $_POST['nationality'];
+                    $socioeconomic_level = $_POST['socioeconomic_level'];
+                    $occupation = $_POST['occupation'];
+    				$sexual_orientation = $_POST['sexual_orientation'];
+   					$skin_color = $_POST['skin_color'];
+
+                    $sql = "INSERT INTO users (name, password, date_birth, age, gender, email, nationality, socioeconomic_level, occupation, sexual_orientation, skin_color) VALUES ('".$name."', '".$password."', '".$date_birth."', $age, $gender, '".$email."', $nationality, socioeconomic_level, '".$occupation."', $sexual_orientation, $skin_color);";
                 }
                 else {
-                    $insercion = "insert into usuario (nombre, contrasena, fecha_nacimiento,edad, genero) values ('".$nombre."', '".$contrasena."', '".$fecha_nacimiento."', $edad, '".$genero."');";
+                    $sql = "INSERT INTO users (name, password, date_birth, age, gender) VALUES ('".$name."', '".$password."', '".$date_birth."', $age, $gender);";
                 }
-                $insert = mysqli_query($conexion, $insercion);
-                if ($insert){
+                $qwery = mysqli_query($connetion, $sql);
+                if ($qwery){
                     //se inserto el nuevo registro
 
-                    $fila = mysqli_fetch_array(mysqli_query($conexion, "select * from usuario where nombre = '$nombre'"));
-                    $json['datos'][] = $fila;
+                    $record = mysqli_fetch_array(mysqli_query($connetion, "SELECT * FROM users WHERE name = '$name'"));
+                    $json['date'][] = $record;
                     echo json_encode($json);
                 }
                 else {
                     //no se inserto el nuevo registro
-                    echo json_encode($jsonVacio);
+                    echo json_encode($emptyJson);
                 }
-                mysqli_close($conexion);
+                mysqli_close($connetion);
             }
         }
         else{
             //La consulta no se realizo con exito
-            echo json_encode($jsonVacio);
+            echo json_encode($emptyJson);
         }
     }
     else{
         //No se establecieron los parametros POST
-        echo json_encode($jsonVacio);
+        echo json_encode($emptyJson);
     }
-    echo json_encode($jsonVacio);
+    echo json_encode($emptyJson);
 
 
     //  Para hacer prubebas, utilice estos códigos.

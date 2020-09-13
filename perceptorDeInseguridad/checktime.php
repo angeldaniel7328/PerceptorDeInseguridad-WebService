@@ -1,17 +1,19 @@
 <?php
-    include "conexion.php";
-        $id_usuario= $_GET["id_usuario"];
-    $sql = "SELECT DATE_SUB(TIME(NOW()),INTERVAL 5 MINUTE) <= (SELECT TIME(p.fecha_hora) FROM usuario u INNER JOIN percepcion p ON u.id_usuario = p.fk_usuario WHERE u.id_usuario = '$id_usuario' ORDER BY p.fecha_hora DESC LIMIT 1) AS tiempo;";
-    $query = mysqli_query($conexion, $sql);
-    while($registros = mysqli_fetch_array($query))
-    {
-        $arreglo[] = array_map("utf8_encode", $registros);
+    include "connection.php";
+    
+    $pk_user= $_POST["pk_user"];
+
+    $sql = "SELECT DATE_SUB(TIME(NOW()),INTERVAL 5 MINUTE) <= (SELECT TIME(p.date_time) FROM users u INNER JOIN perceptions p ON u.pk_user = p.fk_user WHERE u.pk_user = '$pk_user' ORDER BY p.date_time DESC LIMIT 1) AS time_perception;";
+    
+    $query = mysqli_query($connection, $sql);
+    while($records = mysqli_fetch_array($query)){
+        $date_percepctions[] = array_map("utf8_encode", $records);
     }
-    if ($arreglo["tiempo"] == "") {
-        echo "disponible";
+    if ($arreglo["time_perception*"] == "") {
+        echo "available";
     }
     else{
-        echo "indisponible";
+        echo "not available";
     }
-    mysqli_close($conexion);
+    mysqli_close($connection);
 ?>

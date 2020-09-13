@@ -1,48 +1,54 @@
 <?php 
-    include 'conexion.php';
+    include 'connection.php';
 
-    if(isset($_POST["longitud"])              && isset($_POST["latitud"])
-        && isset($_POST["valor_inseguridad"]) && isset($_POST["x"]) 
-        && isset($_POST["y"])                 && isset($_POST["zona"]) 
-        && isset($_POST["hemisferio"])        && isset($_POST["fk_usuario"]) 
-        && isset($_POST["contexto"])          && isset($_POST["tipo_peligro"])){
+    if(
+    	isset($_POST["longitude"]) && 
+    	isset($_POST["latitude"]) && 
+        isset($_POST["insecurity_value"]) && 
+        isset($_POST["x"]) && 
+        isset($_POST["y"]) && 
+        isset($_POST["zone"]) && 
+        isset($_POST["hemisphere"]) && 
+        isset($_POST["fk_user"]) && 
+        isset($_POST["context"]) && 
+        isset($_POST["description"])){
 
-        $longitud     = $_POST['longitud'];
-        $latitud      = $_POST['latitud'];
-        $valor_inseg  = $_POST['valor_inseguridad'];
-        $x            = $_POST['x'];
-        $y            = $_POST['y'];
-        $zona         = $_POST['zona'];
-        $hemisferio   = $_POST['hemisferio'];
-        $fk_usuario   = $_POST['fk_usuario'];
-        $contexto     = $_POST['contexto'];
-        $tipo_peligro = $_POST['tipo_peligro'];
+        $longitude = $_POST['longitude'];
+        $latitude = $_POST['latitude'];
+        $insecurity_value = $_POST['insecurity_value'];
+        $x = $_POST['x'];
+        $y = $_POST['y'];
+        $zone = $_POST['zone'];
+        $hemisphere = $_POST['hemisphere'];
+        $fk_user = $_POST['fk_user'];
+        $context = $_POST['context'];
+        $description = $_POST['description'];
 
-        $sql = "insert into percepcion (latitud, longitud, valor_inseguridad, x, y, zona, hemisferio, contexto, tipo_peligro, fk_usuario) values ($latitud, $longitud, $valor_inseg, $x, $y, $zona, '".$hemisferio."', '".$contexto."', '".$tipo_peligro."', $fk_usuario);";
-        $query = mysqli_query($conexion, $sql);
+        $sql = "INSERT INTO perceptions (latitude, longitude, insecurity_value, x, y, zone, hemisphere, context, description, fk_user) VALUES ($latitude, $longitude, $insecurity_value, $x, $y, $zone, $hemisphere, $context, $description', $fk_user);";
+        $query = mysqli_query($connection, $sql);
         if ($query){
             //se inserto el registro
-            $sq ="select id_percepcion from percepcion where (fk_usuario = $fk_usuario) ORDER by id_percepcion DESC LIMIT 1";
-            $quer = mysqli_query($conexion,$sq);
-            if ($quer) {
-                $datos = mysqli_fetch_array($quer);
-                echo $datos['id_percepcion'];
+            $sql ="SELECT pk_perception FROM perception WHERE (fk_user = $fk_user) ORDER BY pk_perception DESC LIMIT 1";
+            $query = mysqli_query($connection,$sql);
+            if ($query) {
+                $data_perceptions = mysqli_fetch_array($query);
+                echo $data_perceptions['pk_perception'];
             }
             else{
                 //consulta id_perception no realizada
-                echo "invalido";
+                echo "invalid";
             }
         }
         else{
             //no se inserto el registro
-            echo "invalido";
+            echo "invalid";
         }
         
-        mysqli_close($conexion);
+        mysqli_close($connection);
     }
     else{
         //Post no satisfecho
-        echo "invalido";
+        echo "invalid";
     }
 
     //puedes hacer pruebas utilizando este link y cambiando los metodos GET por POST
