@@ -1,3 +1,4 @@
 <?php
-echo "Prueba";
+	//index.php
+	echo "Test";
 ?>

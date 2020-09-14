@@ -1,98 +1,82 @@
 <?php
-    // singup.php
+    // userinformation.php
+    include "connection.php";
 
-    include "conexion.php";
+    $emptyData["id_user"]='';
+    $emptyData["name"]='';
+    $emptyData["birthday"]='';
+    $emptyData["age"]='';
+    $emptyData["gender"]='';
+    $emptyData["nacionality"]='';
+    $emptyData["socioeconomic_level"]='';
+    $emptyData["ocupation"]='';
+    $emptyJson['data'][]=$emptyData;
 
-    $datosVacios["id_usuario"]='';
-    $datosVacios["nombre"]='';
-    $datosVacios["fecha_nacimiento"]='';
-    $datosVacios["edad"]='';
-    $datosVacios["genero"]='';
-    $datosVacios["nacionalidad"]='';
-    $datosVacios["nivel_socioeconomico"]='';
-    $datosVacios["ocupacion"]='';
-    $jsonVacio['datos'][]=$datosVacios;
-
-    if(isset($_GET['nombre']) && isset($_GET['contrasena']) && isset($_GET['fecha_nacimiento']) && isset($_GET['genero']) && isset($_GET['correo'])
+    if(isset($_GET['name']) && isset($_GET['password']) && isset($_GET['birthday']) && isset($_GET['gender']) && isset($_GET['email'])
     ){
-        $nombre=$_GET['nombre'];
-        $contrasena=$_GET['contrasena'];
-        $fecha_nacimiento = $_GET['fecha_nacimiento'];
-        $genero = $_GET['genero'];
-        $correo = $_GET['correo'];
+        $name=$_GET['name'];
+        $password=$_GET['password'];
+        $birthday = $_GET['birthday'];
+        $gender = $_GET['gender'];
+        $email = $_GET['email'];
 
-        $consulta = "select * from usuario where nombre = '$nombre'";
-        $qwery = mysqli_query($conexion, $consulta);
+        $query = "select * from user where name = '$name'";
+        $qwery = mysqli_query($connection, $query);
 
         if($qwery){
-        //la consulta se realizo con exito
-
+        //Query was successful
             if($row = mysqli_num_rows($qwery)> 0){
-                //Ya hay 1 o mas registros con el mismo nombre             
-                echo json_encode($jsonVacio);
+                //There are 1 or more records with the same name
+                echo json_encode($emptyJson);
             }
             else {
-                //no hay registros con el mismo nombre
+                //There are not records with the same name
 
-                //funcion para calcular la edad
-                function busca_edad($fecha_nacimiento){
-                    $dia=date("d");
-                    $mes=date("m");
-                    $ano=date("Y");
-                    $dianaz=date("d",strtotime($fecha_nacimiento));
-                    $mesnaz=date("m",strtotime($fecha_nacimiento));
-                    $anonaz=date("Y",strtotime($fecha_nacimiento));
+                //Function to calculate age
+                function search_age($birthday){
+                    $day=date("d");
+                    $month=date("m");
+                    $year=date("Y");
+                    $daynaz=date("d",strtotime($birthday));
+                    $monthnaz=date("m",strtotime($birthday));
+                    $yearnaz=date("Y",strtotime($birthday));
 
-                    if (($mesnaz == $mes) && ($dianaz > $dia)) {
-                    $ano=($ano-1); }
+                    if (($monthnaz == $month) && ($daynaz > $day)) {
+                    $year=($year-1); }
 
-                    if ($mesnaz > $mes) {
-                    $ano=($ano-1);}
-                    $edad=($ano-$anonaz);
+                    if ($monthnaz > $month) {
+                    $year=($year-1);}
+                    $age=($year-$yearnaz);
 
-                    return $edad;
+                    return $age;
                 }
-                $edad = busca_edad($fecha_nacimiento);
-                $insercion = "insert into usuario (nombre, contrasena, fecha_nacimiento,edad, genero) values ('".$nombre."', '".$contrasena."', '".$fecha_nacimiento."', $edad, '".$genero."');";
-                if (isset($_GET['nacionalidad']) && isset($_GET['nivel_socioeconomico']) isset($_GET['ocupacion'])) {
-                    $nacionalidad = $_GET['nacionalidad'];
-                    $nivel_socioeconomico = $_GET['nivel_socioeconomico'];
-                    $ocupacion = $_GET['ocupacion'];
-                    $insercion = "insert into usuario (nombre, contrasena, fecha_nacimiento, edad, genero, correo,nacionalidad, nivel_socioeconomico, ocupacion) values ('".$nombre."', '".$contrasena."', '".$fecha_nacimiento."', $edad, '".$genero."', '".$correo."', '".$nacionalidad."', '".$nivel_socioeconomico."', '".$ocupacion."');";
-                }
-                /*
-                $insert = mysqli_query($conexion, $insercion);
-                if ($insert){
-                    //se inserto el nuevo registro
-
-                    $fila = mysqli_fetch_array(mysqli_query($conexion, "select * from usuario where nombre = '$nombre'"));
-                    $json['datos'][] = $fila;
-                    echo json_encode($json);
-                }
-                else {
-                    //no se inserto el nuevo registro
-                    echo json_encode($jsonVacio);
-                }*/
-                mysqli_close($conexion);
+                $age = search_age($birthday);
+                $insertion = "insert into user (name, password, birthday,age, gender) values ('".$name."', '".$password."', '".$birthday."', $age, '".$gender."');";
+                if (isset($_GET['nacionality']) && isset($_GET['socioeconomic_level']) isset($_GET['ocupation'])) {
+                    $nacionality = $_GET['nacionality'];
+                    $socioeconomic_level = $_GET['socioeconomic_level'];
+                    $ocupation = $_GET['ocupation'];
+                    $insercion = "insert into user (name, password, birthday, age, gender, email,nacionality, socioeconomic_level, ocupation) values ('".$name."', '".$password."', '".$birthday."', $age, '".$gender."', '".$email."', '".$nacionality."', '".$socioeconomic_level."', '".$ocupation."');";
+                }                
+                mysqli_close($connection);
             }
         }
         else{
-            //La consulta no se realizo con exito
-            echo json_encode($jsonVacio);
+            //Query was not successful
+            echo json_encode($emptyJson);
         }
     }
     else{
-        //No se establecieron los parametros POST
-        echo json_encode($jsonVacio);
+        //No POST parameters set
+        echo json_encode($emptyJson);
     }
 
+    //  For testing, use this codes.
 
-    //  Para hacer prubebas, utilice estos códigos.
+    //  Sing up user without nacionality, socioeconomic level nor ocupation
+    //  https://www.edacarquitectos.com/perceptorDeInseguridad/singup.php?name=frufru&password=123&birthday=2000-07-27&gender=masculino&email=sam@bixor.com
 
-    //  Registrar usuario sin nacionalidad, nivel socioeconomico ni ocupación
-    //  https://www.edacarquitectos.com/perceptorDeInseguridad/singup.php?nombre=frufru&contrasena=123&fecha_nacimiento=2000-07-27&genero=masculino&correo=sam@bixor.com
-
-    //  Registrar usuario con datos completos
-    //  https://www.edacarquitectos.com/perceptorDeInseguridad/singup.php?nombre=teco&contrasena=123&fecha_nacimiento=2000-07-27&genero=masculino&correo=jojo@bixor.com&nacionalidad=mexicana&nivel_socioeconomico=medio&ocupacion=plomero
+    //  Sign up user with complete data.
+    //  https://www.edacarquitectos.com/perceptorDeInseguridad/singup.php?name=teco&password=123&birthday=2000-07-27&gender=masculino&email=jojo@bixor.com&nacionality=mexicana&socioeconomic_level=medio&ocupation=plomero
 
 ?>
